@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Weather Forecast</string>
+    <string name="ok">OK</string>
+    <string name="search">Get Weather</string>
+    <string name="invalid_search_length">Minimum search length is %d</string>
+    <string name="date">Date:</string>
+    <string name="average_temp">Average temperature:</string>
+    <string name="pressure">Pressure:</string>
+    <string name="humidity">Humidity:</string>
+    <string name="description">Description:</string>
+    <string name="celsius">%.1f&#xb0;C</string>
+</resources>

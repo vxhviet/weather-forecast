@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="10dp"
+    android:paddingStart="@dimen/common_start_end_padding"
+    android:paddingEnd="@dimen/common_start_end_padding">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_date_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/date"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_date_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/isr_date_title_tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/isr_date_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Tue 10 Mar, 2020"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_average_temp_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isr_date_title_tv"
+        android:text="@string/average_temp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_average_temp_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/isr_average_temp_title_tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/isr_average_temp_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="20C"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_pressure_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isr_average_temp_title_tv"
+        android:text="@string/pressure"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_pressure_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/isr_pressure_title_tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/isr_pressure_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="1031"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_humidity_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isr_pressure_title_tv"
+        android:text="@string/humidity"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_humidity_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/isr_humidity_title_tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/isr_humidity_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="71%"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_description_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isr_humidity_title_tv"
+        android:text="@string/description"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isr_description_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/isr_description_title_tv"
+        app:layout_constraintBaseline_toBaselineOf="@id/isr_description_title_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="abc"/>
+
+    <View
+        android:id="@+id/isr_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/isr_description_title_tv"
+        android:background="@color/divider"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
