@@ -5,4 +5,5 @@ package com.example.weatherforecast.constant
  */
 object GlobalConstant {
     const val EMPTY = "--"
+    const val NATIVE_LIB_NAME = "native-lib"
 }

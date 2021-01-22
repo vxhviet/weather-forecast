@@ -9,6 +9,7 @@ plugins {
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+    ndkVersion "22.0.7026061"
 
     defaultConfig {
         applicationId "com.example.weatherforecast"
@@ -27,7 +28,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -85,4 +86,6 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation 'net.zetetic:android-database-sqlcipher:4.4.2'
 }

@@ -5,7 +5,7 @@ import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherforecast.base.BaseViewModel
-import com.example.weatherforecast.database.getDatabase
+import com.example.weatherforecast.database.ForecastDatabase
 import com.example.weatherforecast.network.model.Temp
 import com.example.weatherforecast.network.SingleLiveEvent
 import com.example.weatherforecast.repository.ForecastRepository
@@ -19,7 +19,7 @@ class SearchResultViewModel(application: Application) : BaseViewModel(applicatio
         private const val MINIMUM_SEARCH_LENGTH = 3
     }
 
-    override val repository: ForecastRepository = ForecastRepository(getDatabase(application))
+    override val repository: ForecastRepository = ForecastRepository(ForecastDatabase.getDatabase(application))
 
     private val _forecastResultListLiveData: MutableLiveData<List<SearchResultAdapter.ForecastData>> by lazy {
         MutableLiveData<List<SearchResultAdapter.ForecastData>>()

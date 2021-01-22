@@ -1,6 +1,5 @@
 package com.example.weatherforecast.base
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherforecast.network.ApiService
 import com.example.weatherforecast.network.ErrorResponse

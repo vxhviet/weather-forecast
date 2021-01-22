@@ -1,6 +1,7 @@
 package com.example.weatherforecast.repository
 
 import com.example.weatherforecast.base.BaseRepository
+import com.example.weatherforecast.constant.GlobalConstant
 import com.example.weatherforecast.database.ForecastDatabase
 import com.example.weatherforecast.database.entity.CityEntity
 import com.example.weatherforecast.database.entity.ForecastEntity
@@ -25,7 +26,7 @@ class ForecastRepository(private val database: ForecastDatabase) : BaseRepositor
     }
 
     init {
-        System.loadLibrary("native-lib")
+        System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
     }
 
     private external fun getAppID(): String
