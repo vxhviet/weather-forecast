@@ -2,6 +2,7 @@ package com.example.weatherforecast.screen.search_result
 
 import android.app.Application
 import android.text.Editable
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherforecast.base.BaseViewModel
@@ -16,10 +17,11 @@ import kotlinx.coroutines.*
  */
 class SearchResultViewModel(application: Application) : BaseViewModel(application) {
     companion object {
-        private const val MINIMUM_SEARCH_LENGTH = 3
+        @VisibleForTesting
+        internal const val MINIMUM_SEARCH_LENGTH = 3
     }
 
-    override val repository: ForecastRepository = ForecastRepository(ForecastDatabase.getDatabase(application))
+    override val repository: ForecastRepository by lazy { ForecastRepository(ForecastDatabase.getDatabase(application)) }
 
     private val _forecastResultListLiveData: MutableLiveData<List<SearchResultAdapter.ForecastData>> by lazy {
         MutableLiveData<List<SearchResultAdapter.ForecastData>>()

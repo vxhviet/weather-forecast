@@ -53,8 +53,9 @@ This app is built using the following software development principles:
 This project is built in this environment:
 - Mac OS High Sierra 10.13.6.
 - Android Studio 4.1.1.
-- Compile & target SDK version 29.
+- Compile SDK version 29.
 - Build tool version 29.0.3.
+- Target SDK version 28 (for robolectric to run).
 - NDK version 22.0.7026061.
 - CMake version 3.10.2.4988404.
 - Android Virtual Device: x86, Android 10.
