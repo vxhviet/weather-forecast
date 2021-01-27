@@ -6,7 +6,7 @@ import android.app.Dialog
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
-import com.example.weatherforecast.data.source.remote.ErrorResponse
+import com.example.weatherforecast.data.source.Result
 import com.example.weatherforecast.util.DialogFactory
 
 /**
@@ -17,17 +17,17 @@ abstract class BaseActivity : AppCompatActivity() {
     private var isProcessingError = false
     private var errorDialog: Dialog? = null
 
-    open fun onError(errorResponse: ErrorResponse) {
-        showAlert(errorResponse)
+    open fun onError(error: Result.Error) {
+        showAlert(error)
     }
 
-    private fun showAlert(errorResponse: ErrorResponse) {
+    private fun showAlert(error: Result.Error) {
         if (isFinishing || isDestroyed || isProcessingError)
             return
         isProcessingError = true
         errorDialog = DialogFactory.createSimpleOkDialog(
             this,
-            errorResponse.message ?: errorResponse.toString()
+            error.exception.message ?: error.exception.toString()
         )
         errorDialog?.setOnDismissListener {
             isProcessingError = false

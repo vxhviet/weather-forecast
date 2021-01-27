@@ -10,6 +10,7 @@ import com.example.weatherforecast.data.source.local.ForecastDatabase
 import com.example.weatherforecast.data.source.remote.model.Temp
 import com.example.weatherforecast.SingleLiveEvent
 import com.example.weatherforecast.data.source.ForecastRepository
+import com.example.weatherforecast.data.source.Result
 import kotlinx.coroutines.*
 
 /**
@@ -21,7 +22,7 @@ class SearchResultViewModel(application: Application) : BaseViewModel(applicatio
         internal const val MINIMUM_SEARCH_LENGTH = 3
     }
 
-    override val repository: ForecastRepository by lazy { ForecastRepository(ForecastDatabase.getDatabase(application)) }
+    private val repository: ForecastRepository by lazy { ForecastRepository.getRepository(application) }
 
     private val _forecastResultListLiveData: MutableLiveData<List<SearchResultAdapter.ForecastData>> by lazy {
         MutableLiveData<List<SearchResultAdapter.ForecastData>>()
@@ -43,26 +44,33 @@ class SearchResultViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private fun handleDailyForecastForCity(input: String) = viewModelScope.launch {
-        val result = mutableListOf<SearchResultAdapter.ForecastData>()
-        val forecastResponse = repository.getDailyForecastForCity(input)
+        isLoadingEvent.value = true
+        when (val forecastResponse = repository.getDailyForecastForCity(input)) {
+            is Result.Success -> {
+                val result = mutableListOf<SearchResultAdapter.ForecastData>()
+                forecastResponse.data.list?.forEach { foreCast ->
+                    val averageTemperature = getAverageTemperature(foreCast.temp)
+                    result.add(
+                            SearchResultAdapter.ForecastData(
+                                    foreCast.dt,
+                                    averageTemperature,
+                                    foreCast.pressure,
+                                    foreCast.humidity,
+                                    foreCast.weather?.firstOrNull()?.description
+                            )
+                    )
+                }
 
-        forecastResponse?.list?.forEach { foreCast ->
-            val averageTemperature = getAverageTemperature(foreCast.temp)
-            result.add(
-                SearchResultAdapter.ForecastData(
-                    foreCast.dt,
-                    averageTemperature,
-                    foreCast.pressure,
-                    foreCast.humidity,
-                    foreCast.weather?.firstOrNull()?.description
-                )
-            )
+                _forecastResultListLiveData.value = result
+                if (result.isNotEmpty()) {
+                    _dismissKeyboardEvent.call()
+                }
+            }
+            is Result.Error -> {
+                errorLiveData.value = forecastResponse
+            }
         }
-
-        _forecastResultListLiveData.value = result
-        if (result.isNotEmpty()) {
-            _dismissKeyboardEvent.call()
-        }
+        isLoadingEvent.value = false
     }
 
     private fun getAverageTemperature(temperature: Temp?) = if (temperature?.max != null && temperature.min != null) {

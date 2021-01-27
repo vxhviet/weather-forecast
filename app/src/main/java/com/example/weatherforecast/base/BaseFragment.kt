@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.weatherforecast.data.source.remote.ErrorResponse
+import com.example.weatherforecast.data.source.Result
 
 /**
  * Created by viet on 1/19/21.
@@ -42,7 +42,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
                 onChangedLoadingStatus(it)
             }
         })
-        vm.errorLiveData.observe(viewLifecycleOwner, Observer<ErrorResponse> {
+        vm.errorLiveData.observe(viewLifecycleOwner, Observer<Result.Error> {
             it?.let {
                 onError(it)
                 vm.errorLiveData.value = null
@@ -57,10 +57,10 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         }
     }
 
-    open fun onError(errorResponse: ErrorResponse) {
+    open fun onError(error: Result.Error) {
         val act = requireActivity()
         if (act is BaseActivity) {
-            act.onError(errorResponse)
+            act.onError(error)
         }
     }
 

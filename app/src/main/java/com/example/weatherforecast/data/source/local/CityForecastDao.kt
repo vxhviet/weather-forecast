@@ -13,15 +13,12 @@ interface CityForecastDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCity(city: CityEntity)
 
-    @Delete
-    suspend fun deleteCity(city: CityEntity)
-
     @Query("SELECT * FROM CityEntity WHERE searchInput = :input")
     suspend fun getCityBasedOnInput(input: String): CityEntity?
 
     @Transaction
     @Query("SELECT * FROM CityEntity WHERE cityID = :cityID")
-    fun getForecastListForCity(cityID: Int): ForecastForCity
+    suspend fun getForecastListForCity(cityID: Int): ForecastForCity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertForecastList(forecastList: List<ForecastEntity>)

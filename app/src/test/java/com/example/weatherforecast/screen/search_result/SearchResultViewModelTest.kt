@@ -44,11 +44,4 @@ class SearchResultViewModelTest {
         val result = viewModel.invalidSearchLengthEvent.getOrAwaitValue()
         assertThat(result, `is`(SearchResultViewModel.MINIMUM_SEARCH_LENGTH))
     }
-
-    /*@Test
-    fun testvalid() {
-        val value = SpannableStringBuilder("saigon")
-        viewModel.onSearchButtonClicked(value)
-        val forecastResultList = viewModel.forecastResultListLiveData.getOrAwaitValue()
-    }*/
 }

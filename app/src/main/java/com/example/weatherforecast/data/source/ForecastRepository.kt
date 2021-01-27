@@ -1,115 +1,121 @@
 package com.example.weatherforecast.data.source
 
-import com.example.weatherforecast.base.BaseRepository
+import android.app.Application
+import androidx.room.Room
 import com.example.weatherforecast.constant.GlobalConstant
 import com.example.weatherforecast.data.source.local.ForecastDatabase
 import com.example.weatherforecast.data.source.local.entity.CityEntity
 import com.example.weatherforecast.data.source.local.entity.ForecastEntity
-import com.example.weatherforecast.data.source.remote.ErrorResponse
 import com.example.weatherforecast.data.mapper.toForecastEntity
 import com.example.weatherforecast.data.mapper.toForecastResponse
+import com.example.weatherforecast.data.source.local.ForecastLocalDataSource
+import com.example.weatherforecast.data.source.local.entity.ForecastForCity
+import com.example.weatherforecast.data.source.remote.ForecastRemoteDataSource
 import com.example.weatherforecast.data.source.remote.model.ForecastResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
+import net.sqlcipher.database.SupportFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-
 /**
  * Created by viet on 1/21/21.
  */
-class ForecastRepository(private val database: ForecastDatabase) : BaseRepository() {
+class ForecastRepository private constructor(application: Application) {
     companion object {
-        private const val REFRESH_THRESHOLD = 1
+        private const val REFRESH_THRESHOLD_IN_DAY = 1
+
+        @Volatile
+        private var INSTANCE: ForecastRepository? = null
+
+        fun getRepository(app: Application): ForecastRepository {
+            return INSTANCE ?: synchronized(this) {
+                ForecastRepository(app).also {
+                    INSTANCE = it
+                }
+            }
+        }
     }
+
+    private val remoteDataSource: ForecastDataSource
+    private val localDataSource: ForecastDataSource
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     init {
         System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
+
+        val passphrase: ByteArray = getDBPass().toByteArray()
+        val factory = SupportFactory(passphrase)
+
+        val database = Room.databaseBuilder(
+                application,
+                ForecastDatabase::class.java,
+                "forecasts"
+        )
+                .openHelperFactory(factory)
+                .build()
+
+        remoteDataSource = ForecastRemoteDataSource()
+        localDataSource = ForecastLocalDataSource(database.cityForecastDao())
     }
 
-    private external fun getAppID(): String
+    private external fun getDBPass(): String
 
-    suspend fun getDailyForecastForCity(input: String): ForecastResponse? {
-        var result: ForecastResponse?
-
-        withContext(Dispatchers.IO) {
-            val cachedCity = database.cityForecastDao().getCityBasedOnInput(input)
-
-            result = if (cachedCity == null) {
-                fetchRemoteDailyForecastForCity(input)
-            } else {
+    suspend fun getDailyForecastForCity(input: String): Result<ForecastResponse> {
+        return when (val cachedCityResult = localDataSource.getCachedCityBasedOnInput(input)) {
+            is Result.Error -> fetchAndCacheRemoteDailyForecastForCity(input)
+            is Result.Success<CityEntity> -> {
+                val cachedCity = cachedCityResult.data
                 if (isCachedCityStillFresh(cachedCity)) {
-                    val cachedForecastList =
-                        database.cityForecastDao().getForecastListForCity(cachedCity.cityID)
-                    cachedForecastList.toForecastResponse()
+                    when (val cachedForecastListResult = localDataSource.getCachedForecastListForCity(cachedCity.cityID)) {
+                        is Result.Error -> cachedForecastListResult
+                        is Result.Success<ForecastForCity> -> Result.Success(cachedForecastListResult.data.toForecastResponse())
+                    }
                 } else {
-                    fetchRemoteDailyForecastForCity(input)
+                    fetchAndCacheRemoteDailyForecastForCity(input)
                 }
             }
+        }
+    }
+
+    private suspend fun fetchAndCacheRemoteDailyForecastForCity(input: String): Result<ForecastResponse> {
+        val result = remoteDataSource.fetchRemoteDailyForecastForCity(input)
+
+        if (result is Result.Success) {
+            saveForecastResponse(result.data, input)
         }
 
         return result
     }
 
-    private suspend fun fetchRemoteDailyForecastForCity(input: String): ForecastResponse? {
-        var result: ForecastResponse? = null
-
-        withContext(Dispatchers.IO) {
-            isLoadingEvent.postValue(true)
-            var response: Response<ForecastResponse>? = null
-
-            try {
-                response = apiService.getDailyForecastForCity(
-                    input,
-                    10,
-                    getAppID(),
-                    "Metric"
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                errorLiveData.postValue(ErrorResponse(e))
-            }
-
-            isLoadingEvent.postValue(false)
-            response?.let {
-                if (it.isSuccessful) {
-                    result = it.body()
-                    saveForecastResponse(result, input)
-                } else {
-                    errorLiveData.postValue(ErrorResponse(it))
-                }
-            }
+    private suspend fun saveForecastResponse(response: ForecastResponse?, searchInput: String) {
+        val cityID = response?.city?.id
+        val cityName = response?.city?.name
+        if (cityID != null && cityName != null) {
+            val cityEntity = CityEntity(cityID, response.city.name, searchInput, Instant.now().epochSecond)
+            localDataSource.saveCityToCache(cityEntity)
         }
 
-        return result
+        response?.city?.id?.let { cityID ->
+            // remove old forecast list
+            val cachedForecastListResult = localDataSource.getCachedForecastListForCity(cityID)
+            if (cachedForecastListResult is Result.Success) {
+                localDataSource.deleteCachedForecastList(cachedForecastListResult.data.forecastList)
+            }
+
+            // save new forecast list
+            val forecastList = mutableListOf<ForecastEntity>()
+            response.list?.forEach {
+                forecastList.add(it.toForecastEntity(cityID))
+            }
+            localDataSource.saveForecastListToCache(forecastList)
+        }
     }
-
-    private suspend fun saveForecastResponse(response: ForecastResponse?, searchInput: String) =
-        withContext(Dispatchers.IO) {
-            val cityID = response?.city?.id
-            val cityName = response?.city?.name
-            if (cityID != null && cityName != null) {
-                val cityEntity = CityEntity(cityID, response.city.name, searchInput, Instant.now().epochSecond)
-                database.cityForecastDao().insertCity(cityEntity)
-            }
-
-            response?.city?.id?.let { cityID ->
-                // remove old forecast list
-                val cachedForecastList = database.cityForecastDao().getForecastListForCity(cityID).forecastList
-                database.cityForecastDao().deleteForecastList(cachedForecastList)
-
-                // save new forecast list
-                val forecastList = mutableListOf<ForecastEntity>()
-                response.list?.forEach {
-                    forecastList.add(it.toForecastEntity(cityID))
-                }
-                database.cityForecastDao().insertForecastList(forecastList)
-            }
-        }
 
     private fun isCachedCityStillFresh(city: CityEntity): Boolean {
         val lastAccessed = Instant.ofEpochSecond(city.lastUpdate)
         val current = Instant.now()
-        return ChronoUnit.DAYS.between(lastAccessed, current) < REFRESH_THRESHOLD
+        return ChronoUnit.DAYS.between(lastAccessed, current) < REFRESH_THRESHOLD_IN_DAY
     }
 }
+
