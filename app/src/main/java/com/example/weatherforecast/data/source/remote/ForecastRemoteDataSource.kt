@@ -23,7 +23,11 @@ class ForecastRemoteDataSource internal constructor(
     private  val apiService = ApiService.Client.instance
 
     init {
-        System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
+        try {
+            System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
+        } catch (e: UnsatisfiedLinkError) {
+            e.printStackTrace()
+        }
     }
 
     private external fun getAppID(): String

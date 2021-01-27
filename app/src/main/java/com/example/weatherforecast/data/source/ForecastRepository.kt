@@ -14,52 +14,61 @@ import com.example.weatherforecast.data.source.remote.ForecastRemoteDataSource
 import com.example.weatherforecast.data.source.remote.model.ForecastResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import net.sqlcipher.database.SupportFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+
 /**
  * Created by viet on 1/21/21.
  */
-class ForecastRepository private constructor(application: Application) {
+class ForecastRepository(
+        private val remoteDataSource: ForecastDataSource,
+        private val localDataSource: ForecastDataSource,
+        private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) {
+
     companion object {
-        private const val REFRESH_THRESHOLD_IN_DAY = 1
+        init {
+            try {
+                System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
+            } catch (e: UnsatisfiedLinkError) {
+                e.printStackTrace()
+            }
+        }
+
+        @JvmStatic
+        private external fun getDBPass(): String
+
+        private const val REFRESH_THRESHOLD_IN_DAYS = 1
 
         @Volatile
         private var INSTANCE: ForecastRepository? = null
 
         fun getRepository(app: Application): ForecastRepository {
             return INSTANCE ?: synchronized(this) {
-                ForecastRepository(app).also {
+                val databaseDao = initDataBase(app).cityForecastDao()
+
+                ForecastRepository(
+                        ForecastRemoteDataSource(),
+                        ForecastLocalDataSource(databaseDao)
+                ).also {
                     INSTANCE = it
                 }
             }
         }
+
+        private fun initDataBase(app: Application): ForecastDatabase {
+            val passphrase: ByteArray = getDBPass().toByteArray()
+            val factory = SupportFactory(passphrase)
+
+            return Room.databaseBuilder(
+                    app,
+                    ForecastDatabase::class.java,
+                    "forecasts"
+            )
+                    .openHelperFactory(factory)
+                    .build()
+        }
     }
-
-    private val remoteDataSource: ForecastDataSource
-    private val localDataSource: ForecastDataSource
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    init {
-        System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
-
-        val passphrase: ByteArray = getDBPass().toByteArray()
-        val factory = SupportFactory(passphrase)
-
-        val database = Room.databaseBuilder(
-                application,
-                ForecastDatabase::class.java,
-                "forecasts"
-        )
-                .openHelperFactory(factory)
-                .build()
-
-        remoteDataSource = ForecastRemoteDataSource()
-        localDataSource = ForecastLocalDataSource(database.cityForecastDao())
-    }
-
-    private external fun getDBPass(): String
 
     suspend fun getDailyForecastForCity(input: String): Result<ForecastResponse> {
         return when (val cachedCityResult = localDataSource.getCachedCityBasedOnInput(input)) {
@@ -115,7 +124,7 @@ class ForecastRepository private constructor(application: Application) {
     private fun isCachedCityStillFresh(city: CityEntity): Boolean {
         val lastAccessed = Instant.ofEpochSecond(city.lastUpdate)
         val current = Instant.now()
-        return ChronoUnit.DAYS.between(lastAccessed, current) < REFRESH_THRESHOLD_IN_DAY
+        return ChronoUnit.DAYS.between(lastAccessed, current) < REFRESH_THRESHOLD_IN_DAYS
     }
 }
 

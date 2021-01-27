@@ -32,21 +32,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
             version "3.10.2"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     testOptions.unitTests {
         includeAndroidResources = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
     }
 }
 
@@ -60,6 +69,7 @@ dependencies {
     testImplementation "androidx.test:core-ktx:1.2.0"
     testImplementation "org.robolectric:robolectric:4.5"
     testImplementation "androidx.arch.core:core-testing:2.0.0"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
