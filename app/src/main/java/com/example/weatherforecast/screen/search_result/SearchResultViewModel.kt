@@ -6,10 +6,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherforecast.base.BaseViewModel
-import com.example.weatherforecast.database.ForecastDatabase
-import com.example.weatherforecast.network.model.Temp
-import com.example.weatherforecast.network.SingleLiveEvent
-import com.example.weatherforecast.repository.ForecastRepository
+import com.example.weatherforecast.data.source.local.ForecastDatabase
+import com.example.weatherforecast.data.source.remote.model.Temp
+import com.example.weatherforecast.SingleLiveEvent
+import com.example.weatherforecast.data.source.ForecastRepository
 import kotlinx.coroutines.*
 
 /**

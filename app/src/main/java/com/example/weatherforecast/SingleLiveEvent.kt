@@ -1,4 +1,4 @@
-package com.example.weatherforecast.network
+package com.example.weatherforecast
 
 import android.util.Log
 import androidx.annotation.MainThread

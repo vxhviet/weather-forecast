@@ -1,9 +1,9 @@
-package com.example.weatherforecast.mapper
+package com.example.weatherforecast.data.mapper
 
-import com.example.weatherforecast.database.entity.ForecastEntity
-import com.example.weatherforecast.database.entity.ForecastForCity
-import com.example.weatherforecast.database.entity.Temperature
-import com.example.weatherforecast.network.model.*
+import com.example.weatherforecast.data.source.local.entity.ForecastEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastForCity
+import com.example.weatherforecast.data.source.local.entity.Temperature
+import com.example.weatherforecast.data.source.remote.model.*
 
 /**
  * Created by viet on 1/21/21.

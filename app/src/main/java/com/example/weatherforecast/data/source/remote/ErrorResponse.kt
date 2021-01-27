@@ -1,4 +1,4 @@
-package com.example.weatherforecast.network
+package com.example.weatherforecast.data.source.remote
 
 import org.json.JSONObject
 import retrofit2.HttpException

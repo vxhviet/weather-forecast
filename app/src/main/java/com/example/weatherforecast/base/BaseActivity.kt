@@ -6,7 +6,7 @@ import android.app.Dialog
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
-import com.example.weatherforecast.network.ErrorResponse
+import com.example.weatherforecast.data.source.remote.ErrorResponse
 import com.example.weatherforecast.util.DialogFactory
 
 /**

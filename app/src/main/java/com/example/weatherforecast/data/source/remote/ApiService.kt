@@ -1,7 +1,7 @@
-package com.example.weatherforecast.network
+package com.example.weatherforecast.data.source.remote
 
 import com.example.weatherforecast.BuildConfig
-import com.example.weatherforecast.network.model.ForecastResponse
+import com.example.weatherforecast.data.source.remote.model.ForecastResponse
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -17,6 +17,10 @@ import java.util.concurrent.TimeUnit
  * Created by viet on 1/19/21.
  */
 interface ApiService {
+    companion object {
+        private val HOST_URL = "https://api.openweathermap.org/data/2.5/"
+    }
+
     object Client {
         val instance: ApiService by lazy {
             val baseClient = OkHttpClient.Builder()
@@ -35,7 +39,7 @@ interface ApiService {
             val gson = GsonBuilder().create()
 
             Retrofit.Builder()
-                    .baseUrl(EnvConstant.HOST_URL)
+                    .baseUrl(HOST_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .client(httpClient)

@@ -2,11 +2,9 @@ package com.example.weatherforecast.base
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.weatherforecast.network.ApiService
-import com.example.weatherforecast.network.ErrorResponse
-import com.example.weatherforecast.network.SingleLiveEvent
+import com.example.weatherforecast.data.source.remote.ErrorResponse
+import com.example.weatherforecast.SingleLiveEvent
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

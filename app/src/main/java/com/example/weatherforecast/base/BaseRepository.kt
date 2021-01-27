@@ -1,9 +1,9 @@
 package com.example.weatherforecast.base
 
 import androidx.lifecycle.MutableLiveData
-import com.example.weatherforecast.network.ApiService
-import com.example.weatherforecast.network.ErrorResponse
-import com.example.weatherforecast.network.SingleLiveEvent
+import com.example.weatherforecast.data.source.remote.ApiService
+import com.example.weatherforecast.data.source.remote.ErrorResponse
+import com.example.weatherforecast.SingleLiveEvent
 
 /**
  * Created by viet on 1/21/21.

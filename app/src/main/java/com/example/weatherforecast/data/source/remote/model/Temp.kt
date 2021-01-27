@@ -1,4 +1,4 @@
-package com.example.weatherforecast.network.model
+package com.example.weatherforecast.data.source.remote.model
 
 data class Temp(
     val day: Float? = null,

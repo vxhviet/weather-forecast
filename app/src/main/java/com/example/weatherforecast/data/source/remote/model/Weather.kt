@@ -1,4 +1,4 @@
-package com.example.weatherforecast.network.model
+package com.example.weatherforecast.data.source.remote.model
 
 data class Weather(
     val description: String? = null,

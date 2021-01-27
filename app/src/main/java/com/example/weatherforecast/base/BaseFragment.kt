@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.weatherforecast.network.ErrorResponse
+import com.example.weatherforecast.data.source.remote.ErrorResponse
 
 /**
  * Created by viet on 1/19/21.

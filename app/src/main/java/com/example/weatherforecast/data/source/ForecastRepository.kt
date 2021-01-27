@@ -1,20 +1,18 @@
-package com.example.weatherforecast.repository
+package com.example.weatherforecast.data.source
 
 import com.example.weatherforecast.base.BaseRepository
 import com.example.weatherforecast.constant.GlobalConstant
-import com.example.weatherforecast.database.ForecastDatabase
-import com.example.weatherforecast.database.entity.CityEntity
-import com.example.weatherforecast.database.entity.ForecastEntity
-import com.example.weatherforecast.mapper.toForecastEntity
-import com.example.weatherforecast.mapper.toForecastResponse
-import com.example.weatherforecast.network.model.ForecastResponse
-import com.example.weatherforecast.network.ErrorResponse
+import com.example.weatherforecast.data.source.local.ForecastDatabase
+import com.example.weatherforecast.data.source.local.entity.CityEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastEntity
+import com.example.weatherforecast.data.source.remote.ErrorResponse
+import com.example.weatherforecast.data.mapper.toForecastEntity
+import com.example.weatherforecast.data.mapper.toForecastResponse
+import com.example.weatherforecast.data.source.remote.model.ForecastResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import timber.log.Timber
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 /**

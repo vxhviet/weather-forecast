@@ -1,14 +1,12 @@
-package com.example.weatherforecast.database
+package com.example.weatherforecast.data.source.local
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.weatherforecast.constant.GlobalConstant
-import com.example.weatherforecast.database.dao.CityForecastDao
-import com.example.weatherforecast.database.entity.CityEntity
-import com.example.weatherforecast.database.entity.ForecastEntity
+import com.example.weatherforecast.data.source.local.entity.CityEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastEntity
 import net.sqlcipher.database.SupportFactory
 
 
@@ -37,7 +35,7 @@ abstract class ForecastDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): ForecastDatabase {
             synchronized(ForecastDatabase::class.java) {
-                if (!::INSTANCE.isInitialized) {
+                if (!Companion::INSTANCE.isInitialized) {
 
                     val passphrase: ByteArray = getDBPass().toByteArray()
                     val factory = SupportFactory(passphrase)

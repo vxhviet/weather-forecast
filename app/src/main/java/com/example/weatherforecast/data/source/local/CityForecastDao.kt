@@ -1,9 +1,9 @@
-package com.example.weatherforecast.database.dao
+package com.example.weatherforecast.data.source.local
 
 import androidx.room.*
-import com.example.weatherforecast.database.entity.CityEntity
-import com.example.weatherforecast.database.entity.ForecastEntity
-import com.example.weatherforecast.database.entity.ForecastForCity
+import com.example.weatherforecast.data.source.local.entity.CityEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastForCity
 
 /**
  * Created by viet on 1/21/21.
