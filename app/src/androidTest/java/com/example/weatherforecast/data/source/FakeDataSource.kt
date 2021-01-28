@@ -1,11 +1,9 @@
 package com.example.weatherforecast.data.source
 
-import com.example.weatherforecast.data.mapper.toForecastResponse
 import com.example.weatherforecast.data.source.local.entity.CityEntity
 import com.example.weatherforecast.data.source.local.entity.ForecastEntity
 import com.example.weatherforecast.data.source.local.entity.ForecastForCity
 import com.example.weatherforecast.data.source.remote.model.ForecastResponse
-import java.lang.Exception
 
 /**
  * Created by viet on 1/27/21.

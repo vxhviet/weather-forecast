@@ -10,7 +10,7 @@ Java_com_example_weatherforecast_data_source_remote_ForecastRemoteDataSource_get
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_weatherforecast_data_source_ForecastRepository_getDBPass(
+Java_com_example_weatherforecast_data_source_DefaultForecastRepository_getDBPass(
         JNIEnv* env,
         jobject /* this */) {
     std::string pass = "dbPassphrase";

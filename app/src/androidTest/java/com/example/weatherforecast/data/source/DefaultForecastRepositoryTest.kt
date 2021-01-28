@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit
  */
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
-class ForecastRepositoryTest {
+class DefaultForecastRepositoryTest {
     private val city1 = CityEntity(1, "Ho Chi Minh City", "saigon", Instant.now().epochSecond)
     private val city2 = CityEntity(2, "Sydney", "sydney", Instant.now().minus(2, ChronoUnit.DAYS).epochSecond)
     private val localCityList = listOf(city1, city2)
@@ -110,13 +110,13 @@ class ForecastRepositoryTest {
 
     private lateinit var localDataSource: FakeDataSource
     private lateinit var remoteDataSource: FakeDataSource
-    private lateinit var forecastRepository: ForecastRepository
+    private lateinit var forecastRepository: DefaultForecastRepository
 
     @Before
     fun createRepository() {
         remoteDataSource = FakeDataSource(remoteForecastMap = remoteForecastMap)
         localDataSource = FakeDataSource(localCityList.toMutableList(), localForecastList)
-        forecastRepository = ForecastRepository(
+        forecastRepository = DefaultForecastRepository(
                 remoteDataSource, localDataSource, Dispatchers.Unconfined
         )
     }

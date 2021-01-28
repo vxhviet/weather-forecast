@@ -1,50 +1,57 @@
 package com.example.weatherforecast.screen.search_result
 
-import android.app.Application
 import android.text.Editable
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.weatherforecast.util.livedata.Event
+import com.example.weatherforecast.util.livedata.VoidEvent
 import com.example.weatherforecast.base.BaseViewModel
-import com.example.weatherforecast.data.source.local.ForecastDatabase
-import com.example.weatherforecast.data.source.remote.model.Temp
-import com.example.weatherforecast.SingleLiveEvent
 import com.example.weatherforecast.data.source.ForecastRepository
 import com.example.weatherforecast.data.source.Result
-import kotlinx.coroutines.*
+import com.example.weatherforecast.data.source.remote.model.Temp
+import kotlinx.coroutines.launch
 
 /**
  * Created by viet on 1/19/21.
  */
-class SearchResultViewModel(application: Application) : BaseViewModel(application) {
+@Suppress("UNCHECKED_CAST")
+class SearchResultViewModelFactory (
+        private val repository: ForecastRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>) =
+            (SearchResultViewModel(repository) as T)
+}
+
+class SearchResultViewModel(private val repository: ForecastRepository) : BaseViewModel() {
     companion object {
         @VisibleForTesting
         internal const val MINIMUM_SEARCH_LENGTH = 3
     }
-
-    private val repository: ForecastRepository by lazy { ForecastRepository.getRepository(application) }
 
     private val _forecastResultListLiveData: MutableLiveData<List<SearchResultAdapter.ForecastData>> by lazy {
         MutableLiveData<List<SearchResultAdapter.ForecastData>>()
     }
     val forecastResultListLiveData: LiveData<List<SearchResultAdapter.ForecastData>> = _forecastResultListLiveData
 
-    private val _invalidSearchLengthEvent: SingleLiveEvent<Int> by lazy { SingleLiveEvent<Int>() }
-    val invalidSearchLengthEvent: LiveData<Int> = _invalidSearchLengthEvent
+    private val _invalidSearchLengthEvent: MutableLiveData<Event<Int>> by lazy { MutableLiveData<Event<Int>>() }
+    val invalidSearchLengthEvent: LiveData<Event<Int>> = _invalidSearchLengthEvent
 
-    private val _dismissKeyboardEvent: SingleLiveEvent<Void> by lazy { SingleLiveEvent<Void>() }
-    val dismissKeyboardEvent: LiveData<Void> = _dismissKeyboardEvent
+    private val _dismissKeyboardEvent: MutableLiveData<VoidEvent> by lazy { MutableLiveData<VoidEvent>() }
+    val dismissKeyboardEvent: LiveData<VoidEvent> = _dismissKeyboardEvent
 
     fun onSearchButtonClicked(text: Editable?) {
         if (text == null || text.length < MINIMUM_SEARCH_LENGTH) {
-            _invalidSearchLengthEvent.value = MINIMUM_SEARCH_LENGTH
+            _invalidSearchLengthEvent.value = Event(MINIMUM_SEARCH_LENGTH)
         } else {
             handleDailyForecastForCity(text.toString().trim())
         }
     }
 
     private fun handleDailyForecastForCity(input: String) = viewModelScope.launch {
-        isLoadingEvent.value = true
+        isLoadingEvent.value = Event(true)
         when (val forecastResponse = repository.getDailyForecastForCity(input)) {
             is Result.Success -> {
                 val result = mutableListOf<SearchResultAdapter.ForecastData>()
@@ -63,14 +70,14 @@ class SearchResultViewModel(application: Application) : BaseViewModel(applicatio
 
                 _forecastResultListLiveData.value = result
                 if (result.isNotEmpty()) {
-                    _dismissKeyboardEvent.call()
+                    _dismissKeyboardEvent.value = VoidEvent()
                 }
             }
             is Result.Error -> {
                 errorLiveData.value = forecastResponse
             }
         }
-        isLoadingEvent.value = false
+        isLoadingEvent.value = Event(false)
     }
 
     private fun getAverageTemperature(temperature: Temp?) = if (temperature?.max != null && temperature.min != null) {

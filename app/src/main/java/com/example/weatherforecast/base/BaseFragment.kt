@@ -7,6 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.weatherforecast.data.source.Result
+import com.example.weatherforecast.util.livedata.Event
+import com.example.weatherforecast.util.observeEvent
 
 /**
  * Created by viet on 1/19/21.
@@ -29,7 +31,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (hidden)
-            viewModel.isLoadingEvent.postValue(false)
+            viewModel.isLoadingEvent.postValue(Event(false))
     }
 
     open fun observeLiveData() {
@@ -37,11 +39,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     }
 
     fun observeLiveData(vm: BaseViewModel) {
-        vm.isLoadingEvent.observe(viewLifecycleOwner, Observer<Boolean> {
+        vm.isLoadingEvent.observeEvent(viewLifecycleOwner) {
             it?.let {
                 onChangedLoadingStatus(it)
             }
-        })
+        }
         vm.errorLiveData.observe(viewLifecycleOwner, Observer<Result.Error> {
             it?.let {
                 onError(it)

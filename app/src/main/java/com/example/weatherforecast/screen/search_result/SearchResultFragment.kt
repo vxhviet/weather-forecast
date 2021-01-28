@@ -12,7 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherforecast.R
 import com.example.weatherforecast.base.BaseFragment
+import com.example.weatherforecast.data.source.DefaultForecastRepository
 import com.example.weatherforecast.util.hideKeyboard
+import com.example.weatherforecast.util.observeEvent
 import com.example.weatherforecast.util.showHideDividerOnScroll
 import kotlinx.android.synthetic.main.fragment_search_result.*
 
@@ -20,7 +22,9 @@ import kotlinx.android.synthetic.main.fragment_search_result.*
  * Created by viet on 1/19/21.
  */
 class SearchResultFragment : BaseFragment<SearchResultViewModel>() {
-    override val viewModel: SearchResultViewModel by viewModels()
+    override val viewModel: SearchResultViewModel by viewModels {
+        SearchResultViewModelFactory(DefaultForecastRepository.getRepository(requireActivity().application))
+    }
 
     private val adapter: SearchResultAdapter by lazy { SearchResultAdapter(listOf()) }
 
@@ -59,7 +63,7 @@ class SearchResultFragment : BaseFragment<SearchResultViewModel>() {
     override fun observeLiveData() {
         super.observeLiveData()
 
-        viewModel.invalidSearchLengthEvent.observe(viewLifecycleOwner) {
+        viewModel.invalidSearchLengthEvent.observeEvent(viewLifecycleOwner) {
             val content = getString(R.string.invalid_search_length, it)
             Toast.makeText(requireContext(), content, Toast.LENGTH_SHORT).show()
         }
@@ -68,7 +72,7 @@ class SearchResultFragment : BaseFragment<SearchResultViewModel>() {
             adapter.setData(it)
         }
 
-        viewModel.dismissKeyboardEvent.observe(viewLifecycleOwner) {
+        viewModel.dismissKeyboardEvent.observeEvent(viewLifecycleOwner) {
             fsr_search_edt.hideKeyboard()
             fsr_search_edt.clearFocus()
         }
