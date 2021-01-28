@@ -1,8 +1,6 @@
 package com.example.weatherforecast.data.source
 
-import android.text.SpannableStringBuilder
 import com.example.weatherforecast.data.source.remote.model.*
-import java.lang.Exception
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

@@ -27,47 +27,7 @@ class DefaultForecastRepository(
         private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ForecastRepository {
 
     companion object {
-        init {
-            try {
-                System.loadLibrary(GlobalConstant.NATIVE_LIB_NAME)
-            } catch (e: UnsatisfiedLinkError) {
-                e.printStackTrace()
-            }
-        }
-
-        @JvmStatic
-        private external fun getDBPass(): String
-
         private const val REFRESH_THRESHOLD_IN_DAYS = 1
-
-        @Volatile
-        private var INSTANCE: DefaultForecastRepository? = null
-
-        fun getRepository(app: Application): DefaultForecastRepository {
-            return INSTANCE ?: synchronized(this) {
-                val databaseDao = initDataBase(app).cityForecastDao()
-
-                DefaultForecastRepository(
-                        ForecastRemoteDataSource(),
-                        ForecastLocalDataSource(databaseDao)
-                ).also {
-                    INSTANCE = it
-                }
-            }
-        }
-
-        private fun initDataBase(app: Application): ForecastDatabase {
-            val passphrase: ByteArray = getDBPass().toByteArray()
-            val factory = SupportFactory(passphrase)
-
-            return Room.databaseBuilder(
-                    app,
-                    ForecastDatabase::class.java,
-                    "forecasts"
-            )
-                    .openHelperFactory(factory)
-                    .build()
-        }
     }
 
     override suspend fun getDailyForecastForCity(input: String): Result<ForecastResponse> {

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherforecast.R
+import com.example.weatherforecast.WeatherForecastApplication
 import com.example.weatherforecast.base.BaseFragment
 import com.example.weatherforecast.data.source.DefaultForecastRepository
 import com.example.weatherforecast.util.hideKeyboard
@@ -23,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_search_result.*
  */
 class SearchResultFragment : BaseFragment<SearchResultViewModel>() {
     override val viewModel: SearchResultViewModel by viewModels {
-        SearchResultViewModelFactory(DefaultForecastRepository.getRepository(requireActivity().application))
+        SearchResultViewModelFactory((requireContext().applicationContext as WeatherForecastApplication).forecastRepository)
     }
 
     private val adapter: SearchResultAdapter by lazy { SearchResultAdapter(listOf()) }
