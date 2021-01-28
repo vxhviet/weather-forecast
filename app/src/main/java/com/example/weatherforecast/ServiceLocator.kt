@@ -1,6 +1,7 @@
 package com.example.weatherforecast
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import com.example.weatherforecast.constant.GlobalConstant
 import com.example.weatherforecast.data.source.DefaultForecastRepository
@@ -28,6 +29,7 @@ object ServiceLocator {
     private var database: ForecastDatabase? = null
     @Volatile
     var forecastRepository: ForecastRepository? = null
+        @VisibleForTesting set
 
     fun provideForecastRepository(context: Context): ForecastRepository {
         synchronized(this) {
@@ -60,5 +62,18 @@ object ServiceLocator {
 
         database = result
         return result
+    }
+
+    @VisibleForTesting
+    fun resetRepository() {
+        synchronized(this) {
+            // Clear all data to avoid test pollution.
+            database?.apply {
+                clearAllTables()
+                close()
+            }
+            database = null
+            forecastRepository = null
+        }
     }
 }

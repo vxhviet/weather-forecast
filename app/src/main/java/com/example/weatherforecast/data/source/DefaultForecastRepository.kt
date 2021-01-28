@@ -1,20 +1,13 @@
 package com.example.weatherforecast.data.source
 
-import android.app.Application
-import androidx.room.Room
-import com.example.weatherforecast.constant.GlobalConstant
-import com.example.weatherforecast.data.source.local.ForecastDatabase
-import com.example.weatherforecast.data.source.local.entity.CityEntity
-import com.example.weatherforecast.data.source.local.entity.ForecastEntity
 import com.example.weatherforecast.data.mapper.toForecastEntity
 import com.example.weatherforecast.data.mapper.toForecastResponse
-import com.example.weatherforecast.data.source.local.ForecastLocalDataSource
+import com.example.weatherforecast.data.source.local.entity.CityEntity
+import com.example.weatherforecast.data.source.local.entity.ForecastEntity
 import com.example.weatherforecast.data.source.local.entity.ForecastForCity
-import com.example.weatherforecast.data.source.remote.ForecastRemoteDataSource
 import com.example.weatherforecast.data.source.remote.model.ForecastResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import net.sqlcipher.database.SupportFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

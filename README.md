@@ -28,13 +28,13 @@ This app is built using the following software development principles:
 
 #### Structure
 
-- `base/`: contains all the base classes for the app main components (Activity, Fragment, ViewModel, Repository) where they will handle common operation such as error handling, showing error message, displaying loading status.
+- `base/`: contains all the base classes for the app main components (Activity, Fragment, ViewModel) where they will handle common operation such as error handling, showing error message, displaying loading status.
 - `constant/`: contains globally used constants.
-- `database/`: contains all database related stuffs including Entities and DAOs.
+- `data/mapper/`: contains class that does mapping between database Entities and network Models.
+- `data/source/`: contains the repository that will bridge local and remote data sources together.
+- `data/source/local/`: contains all database related stuffs including Entities and DAOs.
+- `data/source/remote/`: contains everything that's related to network operation (api service client, models, responses, etc).
 - `logger/`: contains everything that's required to log in app.
-- `mapper/`: contains class that does mapping between database Entities and network Models.
-- `network/`: contains everything that's related to network operation (api service client, models, responses, etc).
-- `repository/`: contains the repository that will bridge those datasources together.
 - `screen/`: contains the main UI of our app.
 - `util/`: contains commonly used utility classes.
 
@@ -68,8 +68,8 @@ It should run fine using a similar environment.
 - [x] 2. Design app's architecture (suggest MVVM)
 - [x] 3. Apply LiveData mechanism
 - [x] 4. UI should be looks like in attachment.
-- [ ] 5. Write Unit Tests
-- [ ] 6. Acceptance Tests
+- [x] 5. Write Unit Tests
+- [x] 6. Acceptance Tests
 - [x] 7. Exception handling
 - [x] 8. Caching handling
 - [x] 9. Secure Android app from:
