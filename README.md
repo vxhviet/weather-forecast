@@ -1,6 +1,6 @@
 # README
 
-## 1. Overal design:
+## 1. Overall design:
 
 This app is built using the following software development principles:
 - Single Activity + multiple Fragments (due to the scope of the requirement, only one fragment is developed).
